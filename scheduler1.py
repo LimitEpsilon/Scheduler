@@ -1,5 +1,6 @@
 from math import floor
 
+
 class Scheduler:
 
   def __init__(self):
@@ -8,7 +9,8 @@ class Scheduler:
     self.D = int(input("이번 달은 어느 요일에 시작합니까? (0: 일요일): ").strip())
     limit_d = int(input("주간은 최대 몇 번 연속해서 할 수 있습니까?: ").strip()) - 1
     limit_n = int(input("야간은 최대 몇 번 연속해서 할 수 있습니까?: ").strip()) - 1
-    self.limit = [limit_d, limit_n]
+    limit_o = int(input("초과근무는 몇 시간 미만으로 설정할까요?: ").strip())
+    self.limit = [limit_d, limit_n, limit_o]
     self.holidays = [
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0
@@ -22,7 +24,7 @@ class Scheduler:
     self.schedule = []
     for l in range(self.no_date * 2):
       self.schedule.append(-1)
-     
+
     h = list(
       map(int, input("이번 달에 휴일은 무슨 날짜에 있습니까? (콤마 없이): ").strip().split()))
     v = []
@@ -37,17 +39,17 @@ class Scheduler:
     for ppl in range(self.no_people):
       for date in v[ppl]:
         self.vacation[ppl][date - 1] = 1
-    self.sat = [[], []] #토야 is special
-    p = self.no_people - 1 #assign backwards
+    self.sat = [[], []]  #토야 is special
+    p = self.no_people - 1  #assign backwards
     for date in range(self.no_date):
       self.sat[0].append(False)
       self.sat[0].append(False)
       self.sat[1].append(False)
       self.sat[1].append(False)
-      if self.rests_on(date) and self.rests_on(
-          date + 1) and (not self.rests_on(date + 2)):
-        self.sat[0][2*date + 1] = True
-        self.schedule[2*date + 1] = p
+      if self.rests_on(date) and self.rests_on(date + 1) and (
+          not self.rests_on(date + 2)):
+        self.sat[0][2 * date + 1] = True
+        self.schedule[2 * date + 1] = p
         p -= 1
 
   def test_wed(self, p):
@@ -110,14 +112,15 @@ class Scheduler:
         schedule[l - 2] != schedule[l]) and (
           schedule[l - 3] != schedule[l]) and (
             vacation[schedule[l]][floor(l / 2)] == 0) and (
-              self.overwork(schedule[l]) < 48) and self.test_wed(schedule[l])
+              self.overwork(schedule[l]) <
+              self.limit[2]) and self.test_wed(schedule[l])
     else:
       return (schedule[l - 1] != schedule[l]) and (
         schedule[l - 2] != schedule[l]) and (
           schedule[l - 3] != schedule[l]) and (
             schedule[l - 4] != schedule[l]) and (
               vacation[schedule[l]][floor(l / 2)] == 0) and (
-                self.overwork(schedule[l]) < 48)
+                self.overwork(schedule[l]) < self.limit[2])
 
   def print_schedule(self):
     for i in range(self.D):
@@ -143,7 +146,7 @@ class Scheduler:
             l -= 1
             continue
           else:
-          	self.sat[1][l] = True
+            self.sat[1][l] = True
         else:
           self.schedule[l] += 1
         if self.schedule[l] < self.no_people:
