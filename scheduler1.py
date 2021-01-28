@@ -107,20 +107,19 @@ class Scheduler:
     vacation = self.vacation
     if not self.test_alt(l):
       return False
-    if l % 2 == 0:
+    if l % 2 == 0: #day
       return (schedule[l - 1] != schedule[l]) and (
         schedule[l - 2] != schedule[l]) and (
           schedule[l - 3] != schedule[l]) and (
             vacation[schedule[l]][floor(l / 2)] == 0) and (
               self.overwork(schedule[l]) <
               self.limit[2]) and self.test_wed(schedule[l])
-    else:
+    else: #night
       return (schedule[l - 1] != schedule[l]) and (
         schedule[l - 2] != schedule[l]) and (
-          schedule[l - 3] != schedule[l]) and (
-            schedule[l - 4] != schedule[l]) and (
-              vacation[schedule[l]][floor(l / 2)] == 0) and (
-                self.overwork(schedule[l]) < self.limit[2])
+          schedule[l - 4] != schedule[l]) and (
+            vacation[schedule[l]][floor(l / 2)] == 0) and (
+              self.overwork(schedule[l]) < self.limit[2])
 
   def print_schedule(self):
     for i in range(self.D):
